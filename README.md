@@ -35,3 +35,9 @@ Please cite Caffe in your publications if it helps your research:
       Title = {Caffe: Convolutional Architecture for Fast Feature Embedding},
       Year = {2014}
     }
+    
+###Some tutorials in caffe###
+0. draw net using python:
+```python python/draw_net.py examples/net_surgery/conv.prototxt my_net.png```
+1. net surgery tutorials
+2. extract features in caffe
