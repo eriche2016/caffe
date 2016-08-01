@@ -24,7 +24,8 @@ namespace caffe {
  *        Net.
  *
  * Layer%s must implement a Forward function, in which they take their input
- * (bottom) Blob%s (if any) and compute their output Blob%s (if any).
+ * (bottom) Blob%s (if any) and compute their output Blob%s (if any)(Transforms bottom
+ * blobs to top blobs).
  * They may also implement a Backward function, in which they compute the error
  * gradients with respect to their input Blob%s, given the error gradients with
  * their output Blob%s.
