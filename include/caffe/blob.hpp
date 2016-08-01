@@ -266,6 +266,10 @@ class Blob {
   bool ShapeEquals(const BlobProto& other);
 
  protected:
+  /*
+  data_:存储原始数据
+  diff_:存储方向传递的梯度
+  */
   shared_ptr<SyncedMemory> data_;
   shared_ptr<SyncedMemory> diff_;
   shared_ptr<SyncedMemory> shape_data_;
