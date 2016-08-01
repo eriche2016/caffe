@@ -6,7 +6,7 @@ package caffe;
 message BlobShape {
   repeated int64 dim = 1 [packed = true];
 }
-
+// blob的属性以及blob中的数据(data\diff)
 message BlobProto {
   optional BlobShape shape = 7;
   repeated float data = 5 [packed = true];
