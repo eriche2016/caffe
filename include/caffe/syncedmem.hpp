@@ -92,8 +92,10 @@ class SyncedMemory {
  private:
   void to_cpu();
   void to_gpu();
+  //数据在cpu或gpu，指向数据的指针
   void* cpu_ptr_;
   void* gpu_ptr_;
+  
   size_t size_;
   SyncedHead head_;
   bool own_cpu_data_;
