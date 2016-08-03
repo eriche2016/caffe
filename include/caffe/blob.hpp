@@ -268,9 +268,9 @@ class Blob {
  protected:
   /*
   data_:存储原始数据
-  diff_:存储方向传递的梯度
+  diff_:存储反向传递的梯度
   */
-  shared_ptr<SyncedMemory> data_;
+  shared_ptr<SyncedMemory> data_; // data_是shared_ptr of type SyncedMemory
   shared_ptr<SyncedMemory> diff_;
   shared_ptr<SyncedMemory> shape_data_;
   vector<int> shape_;
