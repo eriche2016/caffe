@@ -230,6 +230,7 @@ class Layer {
    * This method should be overridden to return a non-negative value if your
    * layer expects some exact number of bottom blobs.
    */
+   // 返回该层所需的exact的blobs的个数， -1表示不要求准确个数
   virtual inline int ExactNumBottomBlobs() const { return -1; }
   /**
    * @brief Returns the minimum number of bottom blobs required by the layer,
@@ -238,6 +239,7 @@ class Layer {
    * This method should be overridden to return a non-negative value if your
    * layer expects some minimum number of bottom blobs.
    */
+   // 返回该层所需的最少的blobs的个数
   virtual inline int MinBottomBlobs() const { return -1; }
   /**
    * @brief Returns the maximum number of bottom blobs required by the layer,
@@ -246,6 +248,7 @@ class Layer {
    * This method should be overridden to return a non-negative value if your
    * layer expects some maximum number of bottom blobs.
    */
+   // 返回该层所需的最大的bottom blobs的个数
   virtual inline int MaxBottomBlobs() const { return -1; }
   /**
    * @brief Returns the exact number of top blobs required by the layer,
@@ -254,6 +257,7 @@ class Layer {
    * This method should be overridden to return a non-negative value if your
    * layer expects some exact number of top blobs.
    */
+   // 返回该层所需的准确的top blobs的个数
   virtual inline int ExactNumTopBlobs() const { return -1; }
   /**
    * @brief Returns the minimum number of top blobs required by the layer,
@@ -262,6 +266,7 @@ class Layer {
    * This method should be overridden to return a non-negative value if your
    * layer expects some minimum number of top blobs.
    */
+   // 返回该层所需的最少的top blobs的个数
   virtual inline int MinTopBlobs() const { return -1; }
   /**
    * @brief Returns the maximum number of top blobs required by the layer,
@@ -270,6 +275,7 @@ class Layer {
    * This method should be overridden to return a non-negative value if your
    * layer expects some maximum number of top blobs.
    */
+   // 返回该层所需的最大数目的top blobs的个数
   virtual inline int MaxTopBlobs() const { return -1; }
   /**
    * @brief Returns true if the layer requires an equal number of bottom and
@@ -278,6 +284,7 @@ class Layer {
    * This method should be overridden to return true if your layer expects an
    * equal number of bottom and top blobs.
    */
+   // 如果#bottom blobs == # top blobs , 则返回true
   virtual inline bool EqualNumBottomTopBlobs() const { return false; }
 
   /**
