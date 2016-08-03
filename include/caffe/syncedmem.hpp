@@ -1,6 +1,9 @@
 #ifndef CAFFE_SYNCEDMEM_HPP_
 #define CAFFE_SYNCEDMEM_HPP_
 
+// Caffe的底层数据的切换（cpu模式和gpu模式），需要用到内存同步模块
+// data in disk -> cpu <-> GPU -> cpu -> disk to store data
+
 #include <cstdlib>
 
 #include "caffe/common.hpp"
@@ -12,27 +15,31 @@ namespace caffe {
 // The improvement in performance seems negligible in the single GPU case,
 // but might be more significant for parallel training. Most importantly,
 // it improved stability for large models on many GPUs.
+
+// 内联函数：分配内存
 inline void CaffeMallocHost(void** ptr, size_t size, bool* use_cuda) {
-#ifndef CPU_ONLY
-  if (Caffe::mode() == Caffe::GPU) {
-    CUDA_CHECK(cudaMallocHost(ptr, size));
-    *use_cuda = true;
-    return;
+
+#ifndef CPU_ONLY    //允许使用GPU
+  if (Caffe::mode() == Caffe::GPU) { // GPU中调用 cudaMallocHost分配显存
+    CUDA_CHECK(cudaMallocHost(ptr, size));  // 大小：size in bytes
+    *use_cuda = true;            // use_cuda flag 设为true
+    return;  // return 
   }
-#endif
-  *ptr = malloc(size);
-  *use_cuda = false;
+#endif  
+  *ptr = malloc(size); // 在CPU内存中分配内存， 大小: size in bytes  
+  *use_cuda = false;   // use_cuda flag设为false
   CHECK(*ptr) << "host allocation of size " << size << " failed";
 }
 
+// 内联函数：释放内存
 inline void CaffeFreeHost(void* ptr, bool use_cuda) {
 #ifndef CPU_ONLY
   if (use_cuda) {
-    CUDA_CHECK(cudaFreeHost(ptr));
+    CUDA_CHECK(cudaFreeHost(ptr)); // 释放显存
     return;
   }
 #endif
-  free(ptr);
+  free(ptr); // 释放内存
 }
 
 
@@ -42,17 +49,23 @@ inline void CaffeFreeHost(void* ptr, bool use_cuda) {
  *
  * TODO(dox): more thorough description.
  */
+ 
+ // SyncedMemory类
 class SyncedMemory {
  public:
+  // 默认建构子 
   SyncedMemory()
       : cpu_ptr_(NULL), gpu_ptr_(NULL), size_(0), head_(UNINITIALIZED),
         own_cpu_data_(false), cpu_malloc_use_cuda_(false), own_gpu_data_(false),
         gpu_device_(-1) {}
+  // 显式建构子
   explicit SyncedMemory(size_t size)
       : cpu_ptr_(NULL), gpu_ptr_(NULL), size_(size), head_(UNINITIALIZED),
         own_cpu_data_(false), cpu_malloc_use_cuda_(false), own_gpu_data_(false),
         gpu_device_(-1) {}
+  // 解构子
   ~SyncedMemory();
+  // 
   const void* cpu_data();
   void set_cpu_data(void* data);
   const void* gpu_data();
