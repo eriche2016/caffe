@@ -100,7 +100,10 @@ class BasePrefetchingDataLayer :
   // This method may not be overridden.
   void LayerSetUp(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top);
-
+  
+  // 传递参数的方式是const vector of plain pointers（type Blob<Dtype>*） as reference. 例如top, 
+  // 是一个const refernce变量， 表明该应用的变量(vector<Blob<Dtype>*>)是个const, 但是vector中的每一个元素指针
+  // 也是const的， 但是指针指向的obj（类型Blob<Dtype>）却是可变（modifiable）的。
   virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top);
   virtual void Forward_gpu(const vector<Blob<Dtype>*>& bottom,
