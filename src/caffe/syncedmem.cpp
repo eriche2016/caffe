@@ -84,7 +84,7 @@ const void* SyncedMemory::cpu_data() {
   return (const void*)cpu_ptr_;
 }
 
-// 
+// 将data拷贝到CPU中
 void SyncedMemory::set_cpu_data(void* data) {
   CHECK(data);
   if (own_cpu_data_) { // 如果own_cpu_data_为true, 则释放cpu_ptr_指针所指向的内存
@@ -99,28 +99,31 @@ void SyncedMemory::set_cpu_data(void* data) {
 // 获取指向GPU内存中的data指针
 const void* SyncedMemory::gpu_data() {
 #ifndef CPU_ONLY // 如果没有定义CPU_ONLY， 则说明使用GPU
-  // 
+  // 数据放到GPU中
   to_gpu();
   return (const void*)gpu_ptr_;
 #else
-  NO_GPU;
+  NO_GPU; // NO_GPU，直接返回空指针
   return NULL;
 #endif
 }
 
+// 将data拷贝到GPU中
 void SyncedMemory::set_gpu_data(void* data) {
 #ifndef CPU_ONLY
   CHECK(data);
-  if (own_gpu_data_) {
-    int initial_device;
+  if (own_gpu_data_) { // own_gpu_data_为true， 则要释放gpu_ptr_
+    int initial_device;  
+    // cudaGetDevice函数的返回值是host线程执行device code的device id, 保存在initial_device， 
     cudaGetDevice(&initial_device);
     if (gpu_device_ != -1) {
       CUDA_CHECK(cudaSetDevice(gpu_device_));
     }
-    CUDA_CHECK(cudaFree(gpu_ptr_));
-    cudaSetDevice(initial_device);
+    CUDA_CHECK(cudaFree(gpu_ptr_)); // 释放gpu_ptr_
+    cudaSetDevice(initial_device); // 设置当前GPU
   }
-  gpu_ptr_ = data;
+  // gpu_ptr_指向data传进来的位置
+  gpu_ptr_ = data; 
   head_ = HEAD_AT_GPU;
   own_gpu_data_ = false;
 #else
