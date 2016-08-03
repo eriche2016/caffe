@@ -65,14 +65,23 @@ class SyncedMemory {
         gpu_device_(-1) {}
   // 解构子
   ~SyncedMemory();
-  // 
+  
   const void* cpu_data();
   void set_cpu_data(void* data);
   const void* gpu_data();
   void set_gpu_data(void* data);
   void* mutable_cpu_data();
   void* mutable_gpu_data();
+  
+  /* url: http://www.jianshu.com/p/b105578b214b
+  以to_cpu()方法为例: 检查head_所处状态, 若UNINITIALIZED, 则分配内存空间(置0); 
+  若HEAD_AT_GPU, 则需要从GPU内存同步数据到CPU; HEAD_AT_CPU, 则说明目前最新的数
+  据是在CPU的, 无须进行任何操作(虽然并不知道GPU的数据是否和CPU一致, 因为当前我
+  们并不关心GPU数据); 若SYNCED, 则CPU/GPU数据一致, 无须进行任何操作.
+  */
+  // 枚举类型
   enum SyncedHead { UNINITIALIZED, HEAD_AT_CPU, HEAD_AT_GPU, SYNCED };
+  // 返回数据状态：head_
   SyncedHead head() { return head_; }
   size_t size() { return size_; }
 
