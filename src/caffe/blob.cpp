@@ -149,6 +149,7 @@ void Blob<Dtype>::ShareDiff(const Blob& other) {
 // The "update" method is used for parameter blobs in a Net, which are stored
 // as Blob<float> or Blob<double> -- hence we do not define it for
 // Blob<int> or Blob<unsigned int>.
+// 用于更新网络的参数blob
 template <> void Blob<unsigned int>::Update() { NOT_IMPLEMENTED; }
 template <> void Blob<int>::Update() { NOT_IMPLEMENTED; }
 
@@ -156,8 +157,9 @@ template <typename Dtype>
 void Blob<Dtype>::Update() {
   // We will perform update based on where the data is located.
   switch (data_->head()) {
-  case SyncedMemory::HEAD_AT_CPU:
-    // perform computation on CPU
+  case SyncedMemory::HEAD_AT_CPU: // CPU中计算
+    // perform computation on CPU, 更新data的数据
+    // // data_ = data_ - diff_
     caffe_axpy<Dtype>(count_, Dtype(-1),
         static_cast<const Dtype*>(diff_->cpu_data()),
         static_cast<Dtype*>(data_->mutable_cpu_data()));
@@ -165,7 +167,8 @@ void Blob<Dtype>::Update() {
   case SyncedMemory::HEAD_AT_GPU:
   case SyncedMemory::SYNCED:
 #ifndef CPU_ONLY
-    // perform computation on GPU
+    // perform computation on GPU， 在GPU中进行计算
+    // data_ = data_ - diff_， 更新data的数据
     caffe_gpu_axpy<Dtype>(count_, Dtype(-1),
         static_cast<const Dtype*>(diff_->gpu_data()),
         static_cast<Dtype*>(data_->mutable_gpu_data()));
@@ -178,6 +181,8 @@ void Blob<Dtype>::Update() {
   }
 }
 
+// NOT_IMPLEMENTED Macro in "common.hpp": 
+// #define NOT_IMPLEMENTED LOG(FATAL) << "Not Implemented Yet"
 template <> unsigned int Blob<unsigned int>::asum_data() const {
   NOT_IMPLEMENTED;
   return 0;
@@ -188,6 +193,7 @@ template <> int Blob<int>::asum_data() const {
   return 0;
 }
 
+// absolute values sum of data_(即L1 norm)
 template <typename Dtype>
 Dtype Blob<Dtype>::asum_data() const {
   if (!data_) { return 0; }
@@ -223,6 +229,7 @@ template <> int Blob<int>::asum_diff() const {
   return 0;
 }
 
+// 对_diff(梯度)进行 absolute sum values of the _diff.即L1 norm
 template <typename Dtype>
 Dtype Blob<Dtype>::asum_diff() const {
   if (!diff_) { return 0; }
@@ -258,6 +265,7 @@ template <> int Blob<int>::sumsq_data() const {
   return 0;
 }
 
+// Compute the sum of squares (L2 norm squared) of the data
 template <typename Dtype>
 Dtype Blob<Dtype>::sumsq_data() const {
   Dtype sumsq;
@@ -295,6 +303,7 @@ template <> int Blob<int>::sumsq_diff() const {
   return 0;
 }
 
+// Compute the sum of squares (L2 norm squared) of the _diff
 template <typename Dtype>
 Dtype Blob<Dtype>::sumsq_diff() const {
   Dtype sumsq;
