@@ -76,14 +76,16 @@ inline void SyncedMemory::to_gpu() {
 #endif
 }
 
+// cpu_data()主要是获得cpu上data的地址
 const void* SyncedMemory::cpu_data() {
   to_cpu();
   return (const void*)cpu_ptr_;
 }
 
+// 
 void SyncedMemory::set_cpu_data(void* data) {
   CHECK(data);
-  if (own_cpu_data_) {
+  if (own_cpu_data_) { // 如果own_cpu_data为true, 则释放
     CaffeFreeHost(cpu_ptr_, cpu_malloc_use_cuda_);
   }
   cpu_ptr_ = data;
