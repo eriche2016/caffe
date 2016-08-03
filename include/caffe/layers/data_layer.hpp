@@ -14,6 +14,7 @@
 
 namespace caffe {
 
+// DataLayer, 公开继承BasePrefetchingDataLayer
 template <typename Dtype>
 class DataLayer : public BasePrefetchingDataLayer<Dtype> {
  public:
@@ -29,8 +30,14 @@ class DataLayer : public BasePrefetchingDataLayer<Dtype> {
   virtual inline int MaxTopBlobs() const { return 2; }
 
  protected:
+  // 虚方法， 一次导入batch_size大小的数据，之后进行DataTransformer变换
   virtual void load_batch(Batch<Dtype>* batch);
-
+  
+  // DataReader负责从硬盘读数据到一个队列， 之后提供给data_layer使用。
+  // 计时并行运行多个solver，也只有一个线程来读数据， 这样可以确保顺
+  // 序取数据. 不同的solver取到的数据不同.
+  // DataReader没有bottom和top， 如果没有标签， blob数量为1, 有标签blob
+  // 数量为2
   DataReader reader_;
 };
 
