@@ -55,14 +55,16 @@ class Layer;
 template <typename Dtype>
 class LayerRegistry {
  public:
-  typedef shared_ptr<Layer<Dtype> > (*Creator)(const LayerParameter&);
-  typedef std::map<string, Creator> CreatorRegistry;
+  typedef shared_ptr<Layer<Dtype> > (*Creator)(const LayerParameter&); // // 定义类型Creator为函数句柄
+  typedef std::map<string, Creator> CreatorRegistry;  // // 定义一个 <LayerName, CreatorHandler>的Creator列表, key为layer名
 
+  // 只创建一个列表实例
   static CreatorRegistry& Registry() {
     static CreatorRegistry* g_registry_ = new CreatorRegistry();
     return *g_registry_;
   }
 
+  // AddCreator函数用来向Registry列表中添加一组<layername, creatorhandlr>
   // Adds a creator.
   static void AddCreator(const string& type, Creator creator) {
     CreatorRegistry& registry = Registry();
@@ -70,7 +72,10 @@ class LayerRegistry {
         << "Layer type " << type << " already registered.";
     registry[type] = creator;
   }
-
+   
+   /*
+   CreateLayer用于根据输入的LayerParam, 获取当前Layer的layername, 再去registry里通过layername(type)获取对应的creator来创建layer
+   */
   // Get a layer using a LayerParameter.
   static shared_ptr<Layer<Dtype> > CreateLayer(const LayerParameter& param) {
     if (Caffe::root_solver()) {
@@ -80,9 +85,9 @@ class LayerRegistry {
     CreatorRegistry& registry = Registry();
     CHECK_EQ(registry.count(type), 1) << "Unknown layer type: " << type
         << " (known types: " << LayerTypeListString() << ")";
-    return registry[type](param);
+    return registry[type](param); //根据layer name(type), 调用相应creator函数 (registry里存的是函数句柄)
   }
-
+  // 调用该函数，获取layer注册表中存在的所有layer name， 存于vector of strings
   static vector<string> LayerTypeList() {
     CreatorRegistry& registry = Registry();
     vector<string> layer_types;
@@ -113,6 +118,8 @@ class LayerRegistry {
 };
 
 
+// LayerRegisterer类只有一个建构子。 建构子只做一件事: 
+// 在调用LayerRegistry的AddCreator, 在registry list中, 添加一个layer的creator
 template <typename Dtype>
 class LayerRegisterer {
  public:
@@ -123,7 +130,20 @@ class LayerRegisterer {
   }
 };
 
-
+/*
+// 以EuclideanLossLayer为例子，
+//下面的宏
+ REGISTER_LAYER_CLASS(EuclideanLoss);
+//为该layer创建两个函数
+template <typename Dtype>   
+// create一个EuclideanLossLayer对象, 并返回对象指针                                                 
+shared_ptr<Layer<Dtype> > Creator_EuclideanLossLayer(const LayerParameter& param) 
+{                                                                            
+  return shared_ptr<Layer<Dtype> >(new EuclideanLossLayer<Dtype>(param));           
+}                                                                                       \
+static LayerRegisterer<float> g_creator_f_EuclideanLoss("EuclideanLoss", Creator_EuclideanLossLayer<float>);     
+static LayerRegisterer<double> g_creator_d_EuclideanLoss("EuclideanLoss", Creator_EuclideanLossLayer<double>);
+*/
 #define REGISTER_LAYER_CREATOR(type, creator)                                  \
   static LayerRegisterer<float> g_creator_f_##type(#type, creator<float>);     \
   static LayerRegisterer<double> g_creator_d_##type(#type, creator<double>)    \
