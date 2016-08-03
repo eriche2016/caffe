@@ -131,12 +131,14 @@ void SyncedMemory::set_gpu_data(void* data) {
 #endif
 }
 
+// 返回cpu_ptr_ 
 void* SyncedMemory::mutable_cpu_data() {
   to_cpu();
   head_ = HEAD_AT_CPU;
   return cpu_ptr_;
 }
 
+// 返回gpu_ptr
 void* SyncedMemory::mutable_gpu_data() {
 #ifndef CPU_ONLY
   to_gpu();
