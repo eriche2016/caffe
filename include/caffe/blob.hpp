@@ -31,6 +31,7 @@ class Blob {
       const int width);
   explicit Blob(const vector<int>& shape);
 
+   // Reshape函数用来调整Blob形状
   /// @brief Deprecated; use <code>Reshape(const vector<int>& shape)</code>.
   void Reshape(const int num, const int channels, const int height,
       const int width);
@@ -51,6 +52,7 @@ class Blob {
   void Reshape(const vector<int>& shape);
   void Reshape(const BlobShape& shape);
   void ReshapeLike(const Blob& other);
+  
   inline string shape_string() const {
     ostringstream stream;
     for (int i = 0; i < shape_.size(); ++i) {
@@ -82,6 +84,7 @@ class Blob {
    *
    * @param end_axis The first axis to exclude from the slice.
    */
+  // 计算从从start_axis到end_axis的维度乘积
   inline int count(int start_axis, int end_axis) const {
     CHECK_LE(start_axis, end_axis);
     CHECK_GE(start_axis, 0);
@@ -94,6 +97,7 @@ class Blob {
     }
     return count;
   }
+  
   /**
    * @brief Compute the volume of a slice spanning from a particular first
    *        axis to the final axis.
@@ -273,7 +277,7 @@ class Blob {
   shared_ptr<SyncedMemory> data_; // data_是shared_ptr of type SyncedMemory
   shared_ptr<SyncedMemory> diff_;
   shared_ptr<SyncedMemory> shape_data_;
-  vector<int> shape_;
+  vector<int> shape_;  // 存放blob的形状：NCHW， N is the batch_size, 一个Blob可能存储多幅图
   int count_;
   int capacity_;
 
