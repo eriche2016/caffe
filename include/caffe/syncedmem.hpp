@@ -31,12 +31,12 @@ inline void CaffeMallocHost(void** ptr, size_t size, bool* use_cuda) {
   CHECK(*ptr) << "host allocation of size " << size << " failed";
 }
 
-// 内联函数：释放内存
+// 内联函数：释放内存， ptr只想内存位置， use_cuda是一个bool值
 inline void CaffeFreeHost(void* ptr, bool use_cuda) {
 #ifndef CPU_ONLY
-  if (use_cuda) {
+  if (use_cuda) { // 如果使用了cuda, 即use_cuda使true, 则释放显存
     CUDA_CHECK(cudaFreeHost(ptr)); // 释放显存
-    return;
+    return; // 返回
   }
 #endif
   free(ptr); // 释放内存
