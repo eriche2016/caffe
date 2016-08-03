@@ -22,6 +22,8 @@ SyncedMemory::~SyncedMemory() {
 #endif  // CPU_ONLY
 }
 
+//根据head_状态，是否更新数据到CPU. 如果head_是UNINITIALIZED, 则分配cpu内存， 并设置为0.
+// HEAD_AT_GPU, 则需要从GPU内存同步数据到CPU， 如果HEAD_AT_CPU， SYNCED， 则不做任何操作
 inline void SyncedMemory::to_cpu() {
   switch (head_) {
   case UNINITIALIZED:
@@ -85,16 +87,19 @@ const void* SyncedMemory::cpu_data() {
 // 
 void SyncedMemory::set_cpu_data(void* data) {
   CHECK(data);
-  if (own_cpu_data_) { // 如果own_cpu_data为true, 则释放
+  if (own_cpu_data_) { // 如果own_cpu_data_为true, 则释放cpu_ptr_指针所指向的内存
     CaffeFreeHost(cpu_ptr_, cpu_malloc_use_cuda_);
   }
+  // 将cpu_ptr_重新指向一个新的区域（该新的区域由传进来的data指向）
   cpu_ptr_ = data;
   head_ = HEAD_AT_CPU;
-  own_cpu_data_ = false;
+  own_cpu_data_ = false; // 设置为false， 避免多次调用该函数，频繁释放空间
 }
 
+// 获取指向GPU内存中的data指针
 const void* SyncedMemory::gpu_data() {
-#ifndef CPU_ONLY
+#ifndef CPU_ONLY // 如果没有定义CPU_ONLY， 则说明使用GPU
+  // 
   to_gpu();
   return (const void*)gpu_ptr_;
 #else
