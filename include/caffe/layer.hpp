@@ -38,6 +38,7 @@ class Layer {
    * to SetUp(), where the dimensions of the bottom blobs are provided to the
    * layer.
    */
+  // 显式建构子
   explicit Layer(const LayerParameter& param)
     : layer_param_(param), is_shared_(false) {
       // Set phase and copy blobs (if there are any).
@@ -50,6 +51,8 @@ class Layer {
         }
       }
     }
+    
+  // 解构子
   virtual ~Layer() {}
 
   /**
@@ -68,9 +71,13 @@ class Layer {
   void SetUp(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
     InitMutex();
+    // 核对bottom blobs和top blobs是否正确
     CheckBlobCounts(bottom, top);
+    // 做特殊层的设置
     LayerSetUp(bottom, top);
+    // 设置top blobs的sizes和internal buffers
     Reshape(bottom, top);
+    // 设置loss权重乘子blobs， 该方法不能被overrides
     SetLossWeights(top);
   }
 
