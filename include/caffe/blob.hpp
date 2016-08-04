@@ -9,7 +9,7 @@
 #include "caffe/proto/caffe.pb.h"
 #include "caffe/syncedmem.hpp"
 
-const int kMaxBlobAxes = 32;
+const int kMaxBlobAxes = 32;  // kMaxBlobAxes是blob的最大的维度数目， 常见的，NCHW形式的图像数组是一个四维数组
 
 namespace caffe {
 
@@ -133,13 +133,18 @@ class Blob {
   }
 
   /// @brief Deprecated legacy shape accessor num: use shape(0) instead.
+  // shape()[0]
   inline int num() const { return LegacyShape(0); }
   /// @brief Deprecated legacy shape accessor channels: use shape(1) instead.
+  // shape()[1]
   inline int channels() const { return LegacyShape(1); }
   /// @brief Deprecated legacy shape accessor height: use shape(2) instead.
+  // shape()[2]
   inline int height() const { return LegacyShape(2); }
   /// @brief Deprecated legacy shape accessor width: use shape(3) instead.
+  // shape()[3]
   inline int width() const { return LegacyShape(3); }
+  
   inline int LegacyShape(int index) const {
     CHECK_LE(num_axes(), 4)
         << "Cannot use legacy accessors on Blobs with > 4 axes.";
