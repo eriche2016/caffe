@@ -21,10 +21,10 @@ void Blob<Dtype>::Reshape(const int num, const int channels, const int height,
 
 template <typename Dtype>
 void Blob<Dtype>::Reshape(const vector<int>& shape) {
-  CHECK_LE(shape.size(), kMaxBlobAxes);
-  count_ = 1;
-  shape_.resize(shape.size());
-  if (!shape_data_ || shape_data_->size() < shape.size() * sizeof(int)) {
+  CHECK_LE(shape.size(), kMaxBlobAxes); // 检查维数
+  count_ = 1;  // 用于计算新的多维数组的大小, 即shape[0]*shape[1]*shape[2]*shape[3]
+  shape_.resize(shape.size()); // 更新维数
+  if (!shape_data_ || shape_data_->size() < shape.size() * sizeof(int)) { // shape_data_ 未初始化或者内存太小
     shape_data_.reset(new SyncedMemory(shape.size() * sizeof(int)));
   }
   int* shape_data = static_cast<int*>(shape_data_->mutable_cpu_data());
@@ -37,7 +37,7 @@ void Blob<Dtype>::Reshape(const vector<int>& shape) {
     shape_[i] = shape[i];
     shape_data[i] = shape[i];
   }
-  if (count_ > capacity_) {
+  if (count_ > capacity_) { // 内存不够， 则重新分配内存, capacity_保存当前元素的个数
     capacity_ = count_;
     data_.reset(new SyncedMemory(capacity_ * sizeof(Dtype)));
     diff_.reset(new SyncedMemory(capacity_ * sizeof(Dtype)));
@@ -159,7 +159,7 @@ void Blob<Dtype>::Update() {
   switch (data_->head()) {
   case SyncedMemory::HEAD_AT_CPU: // CPU中计算
     // perform computation on CPU, 更新data的数据
-    // // data_ = data_ - diff_
+    // // data_(新参数) = data_（原参数） - diff_（梯度）
     caffe_axpy<Dtype>(count_, Dtype(-1),
         static_cast<const Dtype*>(diff_->cpu_data()),
         static_cast<Dtype*>(data_->mutable_cpu_data()));
