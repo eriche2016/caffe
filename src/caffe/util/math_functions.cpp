@@ -16,6 +16,16 @@ void caffe_cpu_gemm<float>(const CBLAS_TRANSPOSE TransA,
     float* C) {
   int lda = (TransA == CblasNoTrans) ? K : M;
   int ldb = (TransB == CblasNoTrans) ? N : K;
+  // multiplies two matrices 
+  // TransA: specify whether to transopose matrix A
+  // TransB: whether to transopose matrix B
+  // M: Number of rows in matrices A and C
+  // N: Number of columns in matrices B and C
+  // K: Number of columns in matrix A, Number of tows in matrix B
+  // alpha: scaling factor for the product of matrices A and B 
+  // A:M*K, B:K*N, C:M*N
+  // C = alpha*A*B + beta*C or C = alpha*B*A + beta*C with optional transposed forms of A, B or both
+  // ida, idb, idc(here N): the size of first dimension of matrix A(or B), if A[m][n], then lda = m  
   cblas_sgemm(CblasRowMajor, TransA, TransB, M, N, K, alpha, A, lda, B,
       ldb, beta, C, N);
 }
