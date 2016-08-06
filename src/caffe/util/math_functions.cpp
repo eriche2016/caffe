@@ -45,9 +45,17 @@ void caffe_cpu_gemv<double>(const CBLAS_TRANSPOSE TransA, const int M,
   cblas_dgemv(CblasRowMajor, TransA, M, N, alpha, A, N, x, 1, beta, y, 1);
 }
 
+// Y = alpha * X + Y
+// N: numElements
+// alpha: scaling factor for the values in x
+// X: input vector(matrix)
+// 第一个1：strod within X, e.g, if set 7, then every seventh element is used 
+// Y： input vector(matrix) Y
+// 第二个1：stride within Y.同上一个1.
+// 返回值保存到Y：Y = alpha* X + Y
 template <>
 void caffe_axpy<float>(const int N, const float alpha, const float* X,
-    float* Y) { cblas_saxpy(N, alpha, X, 1, Y, 1); }
+    float* Y) { cblas_saxpy(N, alpha, X, 1, Y, 1); } // 封装的函数，调用BLAS函数， 进行矩阵线性运算
 
 template <>
 void caffe_axpy<double>(const int N, const double alpha, const double* X,
