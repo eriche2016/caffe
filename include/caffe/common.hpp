@@ -153,17 +153,21 @@ class Caffe {
 #endif
 
   // Returns the mode: running on CPU or GPU.
+  // CPU or GPU
   inline static Brew mode() { return Get().mode_; }
   // The setters for the variables
   // Sets the mode. It is recommended that you don't change the mode halfway
   // into the program since that may cause allocation of pinned memory being
   // freed in a non-pinned way, which may cause problems - I haven't verified
   // it personally but better to note it here in the header file.
+  // 设置mode 是GPU还是CPU
   inline static void set_mode(Brew mode) { Get().mode_ = mode; }
   // Sets the random seed of both boost and curand
+  // 设置随机种子
   static void set_random_seed(const unsigned int seed);
   // Sets the device. Since we have cublas and curand stuff, set device also
   // requires us to reset those values.
+  // 设置GPU ID
   static void SetDevice(const int device_id);
   // Prints the current GPU status.
   static void DeviceQuery();
@@ -173,7 +177,9 @@ class Caffe {
   // return the ordinal of the first available device.
   static int FindDevice(const int start_id = 0);
   // Parallel training info
+  // 返回并行运行的训练个数
   inline static int solver_count() { return Get().solver_count_; }
+  // 设置并行个数
   inline static void set_solver_count(int val) { Get().solver_count_ = val; }
   inline static bool root_solver() { return Get().root_solver_; }
   inline static void set_root_solver(bool val) { Get().root_solver_ = val; }
