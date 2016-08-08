@@ -119,6 +119,7 @@ class Caffe {
   // Thread local context for Caffe. Moved to common.cpp instead of
   // including boost/thread.hpp to avoid a boost/NVCC issues (#1009, #1010)
   // on OSX. Also fails on Linux with CUDA 7.0.18.
+  // 静态函数
   static Caffe& Get(); // 该静态函数会返回一个Caffe class的示例
 
   enum Brew { CPU, GPU };
