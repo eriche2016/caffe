@@ -12,6 +12,7 @@ namespace caffe {
 // Make sure each thread can have different values.
 static boost::thread_specific_ptr<Caffe> thread_instance_;
 
+// 返回Caffe实例的reference
 Caffe& Caffe::Get() {
   if (!thread_instance_.get()) {
     thread_instance_.reset(new Caffe());
