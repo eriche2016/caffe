@@ -9,15 +9,16 @@
 
 namespace caffe {
 
+ // 命名空间的一个静态指针变量（Caffe类型）
 // Make sure each thread can have different values.
 static boost::thread_specific_ptr<Caffe> thread_instance_;
 
-// 返回Caffe实例的reference
+// 静态函数Get： 返回Caffe实例的reference
 Caffe& Caffe::Get() {
   if (!thread_instance_.get()) {
     thread_instance_.reset(new Caffe());
   }
-  return *(thread_instance_.get());
+  return *(thread_instance_.get()); 
 }
 
 // random seeding
@@ -51,20 +52,20 @@ void GlobalInit(int* pargc, char*** pargv) {
 }
 
 #ifdef CPU_ONLY  // CPU-only Caffe.
-
+// 默认建钩子
 Caffe::Caffe()
     : random_generator_(), mode_(Caffe::CPU),
       solver_count_(1), root_solver_(true) { }
-
+// 解构子
 Caffe::~Caffe() { }
-
+// 设置随机种子
 void Caffe::set_random_seed(const unsigned int seed) {
   // RNG seed
   Get().random_generator_.reset(new RNG(seed));
 }
-
+// 因为该选择编译只是在CPU_ONLY，所以设置Device只是返回NO_GPU
 void Caffe::SetDevice(const int device_id) {
-  NO_GPU;
+  NO_GPU; 
 }
 
 void Caffe::DeviceQuery() {
@@ -80,7 +81,7 @@ int Caffe::FindDevice(const int start_id) {
   NO_GPU;
   return -1;
 }
-
+// 定义Caffe类下面的RNG里面的嵌套类：Generator
 class Caffe::RNG::Generator {
  public:
   Generator() : rng_(new caffe::rng_t(cluster_seedgen())) {}
