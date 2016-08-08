@@ -66,12 +66,12 @@ class SyncedMemory {
   // 解构子
   ~SyncedMemory();
   
-  const void* cpu_data();
+  const void* cpu_data(); // 返回的指针是const pointer， 故而不可以修改数据
   void set_cpu_data(void* data);
-  const void* gpu_data();
+  const void* gpu_data(); // 返回的指针是const pointer， 故而不可以修改数据
   void set_gpu_data(void* data);
-  void* mutable_cpu_data();
-  void* mutable_gpu_data();
+  void* mutable_cpu_data(); // 返回的指针没有const修饰，可以修改指针对应的数据
+  void* mutable_gpu_data(); // 返回的指针没有const修饰，可以修改指针对应的数据
   
   /* url: http://www.jianshu.com/p/b105578b214b
   以to_cpu()方法为例: 检查head_所处状态, 若UNINITIALIZED, 则分配内存空间(置0); 
