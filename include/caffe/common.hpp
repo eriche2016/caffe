@@ -28,7 +28,7 @@
 // TODO(Yangqing): Once gflags solves the problem in a more elegant way, let's
 // remove the following hack.
 #ifndef GFLAGS_GFLAGS_H_
-namespace gflags = google;
+namespace gflags = google; // redirect the namespace
 #endif  // GFLAGS_GFLAGS_H_
 
 // Disable the copy and assignment operator for a class.
@@ -60,23 +60,24 @@ private:\
       const std::vector<Blob<double>*>& top, \
       const std::vector<bool>& propagate_down, \
       const std::vector<Blob<double>*>& bottom)
-
+// 该宏会调用前面定义的两个宏，用于实例化GPU版本的forward和backward 
 #define INSTANTIATE_LAYER_GPU_FUNCS(classname) \
   INSTANTIATE_LAYER_GPU_FORWARD(classname); \
   INSTANTIATE_LAYER_GPU_BACKWARD(classname)
 
 // A simple macro to mark codes that are not implemented, so that when the code
 // is executed we will see a fatal log.
+// NOT_IMPLEMENTED宏
 #define NOT_IMPLEMENTED LOG(FATAL) << "Not Implemented Yet"
 
 // See PR #1236
 namespace cv { class Mat; }
-
+// 封装caffe命名空间
 namespace caffe {
 
 // We will use the boost shared_ptr instead of the new C++11 one mainly
 // because cuda does not work (at least now) well with C++11 features.
-using boost::shared_ptr;
+using boost::shared_ptr; // 使用boost的shared_ptr， 而非C++11的shared_ptr
 
 // Common functions and classes from std that caffe often uses.
 using std::fstream;
@@ -97,6 +98,18 @@ using std::vector;
 // Currently it initializes google flags and google logging.
 void GlobalInit(int* pargc, char*** pargv);
 
+/*
+  Singleton pattern: restricts the instantiation of a class to one object
+  This is useful when exactly one object is needed to coordinate actions 
+  across the system.
+  An implementation of the singleton pattern must:
+  (1) ensure that only one instance of the singleton class ever exists; and
+  (2) provide global access to that instance
+  This can be achieved by:
+  (1) declaring all constructors of the class to be private;
+  (2) providing a static method that returns a reference to the instance.
+*/
+
 // A singleton class to hold common caffe stuff, such as the handler that
 // caffe is going to use for cublas, curand, etc.
 class Caffe {
@@ -106,22 +119,23 @@ class Caffe {
   // Thread local context for Caffe. Moved to common.cpp instead of
   // including boost/thread.hpp to avoid a boost/NVCC issues (#1009, #1010)
   // on OSX. Also fails on Linux with CUDA 7.0.18.
-  static Caffe& Get();
+  static Caffe& Get(); // 该静态函数会返回一个Caffe class的示例
 
   enum Brew { CPU, GPU };
 
   // This random number generator facade hides boost and CUDA rng
   // implementation from one another (for cross-platform compatibility).
+  // 随机数发生器 类
   class RNG {
    public:
     RNG();
     explicit RNG(unsigned int seed);
     explicit RNG(const RNG&);
-    RNG& operator=(const RNG&);
+    RNG& operator=(const RNG&); // 赋值操作
     void* generator();
    private:
     class Generator;
-    shared_ptr<Generator> generator_;
+    shared_ptr<Generator> generator_; // type为Generator的shared_ptr
   };
 
   // Getters for boost rng, curand, and cublas handles
@@ -131,7 +145,7 @@ class Caffe {
     }
     return *(Get().random_generator_);
   }
-#ifndef CPU_ONLY
+#ifndef CPU_ONLY // 开启GPU
   inline static cublasHandle_t cublas_handle() { return Get().cublas_handle_; }
   inline static curandGenerator_t curand_generator() {
     return Get().curand_generator_;
@@ -165,7 +179,7 @@ class Caffe {
   inline static void set_root_solver(bool val) { Get().root_solver_ = val; }
 
  protected:
-#ifndef CPU_ONLY
+#ifndef CPU_ONLY  // 开启GPU
   cublasHandle_t cublas_handle_;
   curandGenerator_t curand_generator_;
 #endif
@@ -177,8 +191,9 @@ class Caffe {
 
  private:
   // The private constructor to avoid duplicate instantiation.
+  // 私有建构子
   Caffe();
-
+  // 关掉 复制，赋值操作
   DISABLE_COPY_AND_ASSIGN(Caffe);
 };
 
