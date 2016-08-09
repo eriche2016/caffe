@@ -35,7 +35,20 @@ Please cite Caffe in your publications if it helps your research:
       Title = {Caffe: Convolutional Architecture for Fast Feature Embedding},
       Year = {2014}
     }
-    
+
+### Install from this repository ###
+In this repository, I add mil layer and mil data layer for multi-instance learning problem. 
+
+Here I added my own Makefile.config(If you use repository, you need to modify this file to suite your need).
+I install the file using the following command: 
+```bash 
+# cp Makefile.config.example Makefile.config
+# Adjust Makefile.config (for example, if using Anaconda Python, or if cuDNN is desired)
+make all
+make test
+make runtest
+```
+
 ###Some useful tutorials in caffe###
 0. draw net using python:
 ```python python/draw_net.py examples/net_surgery/conv.prototxt my_net.png```
