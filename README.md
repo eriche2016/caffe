@@ -37,9 +37,9 @@ Please cite Caffe in your publications if it helps your research:
     }
 
 ### Install from this repository ###
-In this repository, I add mil layer and mil data layer for multi-instance learning problem. 
+In this repository, I add `mil_layer` and `mil_data_layer` for multi-instance learning problem. 
 
-Here I added my own Makefile.config(If you use repository, you need to modify this file to suite your need).
+Here I added my own `Makefile.config`(If you use repository, you need to modify this file to suite your need).
 I install the file using the following command: 
 ```bash 
 # cp Makefile.config.example Makefile.config
