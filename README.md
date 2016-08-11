@@ -44,11 +44,12 @@ I install the file using the following command:
 ```bash 
 # cp Makefile.config.example Makefile.config
 # Adjust Makefile.config (for example, if using Anaconda Python, or if cuDNN is desired)
-make all
-make test
-make runtest
+make all -j8
+make test -j8
+make runtest -j8
 ```
 To compile the Python and MATLAB wrappers do `make pycaffe` and `make matcaffe` respectively. *Be sure to set your MATLAB and Python paths in Makefile.config first!*
+NOte: For a faster build, compile in parallel by doing make all -j8 where 8 is the number of parallel threads for compilation (a good choice for the number of threads is the number of cores in your machine).
 
 ###Some useful tutorials in caffe###
 0. draw net using python:
