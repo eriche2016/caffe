@@ -48,6 +48,7 @@ make all
 make test
 make runtest
 ```
+To compile the Python and MATLAB wrappers do `make pycaffe` and `make matcaffe` respectively. *Be sure to set your MATLAB and Python paths in Makefile.config first!*
 
 ###Some useful tutorials in caffe###
 0. draw net using python:
